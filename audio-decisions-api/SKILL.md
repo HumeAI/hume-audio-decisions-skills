@@ -27,7 +27,7 @@ The API is good at **listening questions**: something a group of people could an
 | --- | --- |
 | How something sounds (tone, emotion conveyed, accent, quality, background) | Ask the API |
 | Which of several things was said or meant, with the options supplied (intent, request type, a word from a list) | Ask the API as a `choice` |
-| When something happens | Ask the API as a `moment` question, and confirm what it finds (see Step 1) |
+| When something happens | Ask the API as a `span` question, and confirm what it finds (see Step 1) |
 | Open-ended output: a transcript, a summary, a free topic label | Use speech-to-text and an LLM |
 | Counting (speakers, turns, seconds) or exact timestamps | Use speaker separation (diarization), voice activity detection or signal processing |
 | An outcome that needs reasoning ("Is this call escalating?", "Will this caller buy?") | Break it into listening questions plus other signals: [references/breaking-down-questions.md](references/breaking-down-questions.md) |
@@ -51,7 +51,7 @@ Work through four things:
 | *Whether* something happens in a turn or a call | The turn, or the whole file |
 | *How* a known moment sounds (a reply, a greeting) | A window centred on the moment, at least 5 s long |
 | *Where* or *how often* something happens, and it's frequent or missing one is costly | Overlapping windows, at least twice as long as the longest expected event |
-| *Where* something happens, and it's rare in long audio | A `moment` question on the turn or chunk, then confirm each moment with a `noul` question on a window around it |
+| *Where* something happens, and it's rare in long audio | A `span` question on the turn or chunk, then confirm each span with a `noul` question on a window around it |
 | An overall impression of a recording longer than 5 minutes | Chunks of up to 5 minutes, cut and sent by the SDKs' `create_chunked`, answers combined in your code |
 | Answers *while someone is talking* | Rolling windows (see the real-time recipe) |
 
@@ -70,7 +70,7 @@ Recipes for each of these (channel extraction, window sizing, cutting at silence
 | `noul` | Yes or no | The share of raters who'd say yes |
 | `choice` | Which one of several options you supply | The likeliest option, `confidence`, and a probability per option |
 | `score` | How much, on an ordered scale you supply | The mean level (from 0), `confidence`, and a probability per level |
-| `moment` | When an event happens | Time ranges in milliseconds, each with a probability |
+| `span` | When an event happens | Time ranges in milliseconds, each with a probability |
 
 Rules that matter most:
 
@@ -79,7 +79,7 @@ Rules that matter most:
 - **Say what counts as yes.** A `noul` question's optional `criteria` says what counts as `true` and as `false`.
 - **Use `context` for what a rater needs to know:** the setting, who is speaking, a transcript or earlier turns, the line being judged, or a list of candidates. Don't use it to ask the question.
 - **Match the question to the unit.** An event question on a long recording gets diluted. A trait question on a single short window is noisy.
-- **Treat `moment` as a way to find candidates,** not a measurement. Confirm each moment with a `noul` question on a window of at least 5 s around it.
+- **Treat `span` as a way to find candidates,** not a measurement. Confirm each span with a `noul` question on a window of at least 5 s around it.
 - **Send all the questions for one unit in one request,** in the same order every time. Questions in a request are answered in one model inference, so adding, removing or reordering questions can change the answers.
 - **Ask what you need.** Requests are billed in input tokens, which grow with the audio's length, the `context` and the number of questions. `decisions.input_tokens` (`inputTokens` in TypeScript) counts a request before you send it.
 - **Gates and follow-ups belong in your code.** Ask a cheap question on everything, then more questions only where it says yes.
@@ -116,7 +116,7 @@ A question you haven't checked is a guess. At minimum:
 
 | File | What's in it |
 | --- | --- |
-| [references/audio-units.md](references/audio-units.md) | Speakers and channels, window sizing, moments vs windows, long recordings, the real-time recipe, audio preparation commands |
+| [references/audio-units.md](references/audio-units.md) | Speakers and channels, window sizing, spans vs windows, long recordings, the real-time recipe, audio preparation commands |
 | [references/question-design.md](references/question-design.md) | Question types in detail, wording, options, scales, `context`, example questions by area |
 | [references/capabilities.md](references/capabilities.md) | What generally works, what works under conditions, what's unproven and how to build it, what not to use the API for |
 | [references/breaking-down-questions.md](references/breaking-down-questions.md) | Turning an outcome question into listening questions plus other signals, with worked examples |

@@ -49,16 +49,16 @@ The answer has the likeliest option, a `confidence`, and a probability per optio
 
 Levels are listed lowest first and numbered from 0. The answer has `score` (the mean level, so 2.6 means between "Moderately" and "Very"), a `confidence`, and a probability and label per level. Use it for ranking and intensity.
 
-### `moment`: when something happens
+### `span`: when something happens
 
 ```json
 "laughs": {
-  "type": "moment",
+  "type": "span",
   "instructions": "When does the caller laugh?"
 }
 ```
 
-The answer is a list of `moments`: time ranges in milliseconds from the start of the file, each with a probability. An empty list means the event was not found. A `moment` answer gives times but no share of raters, so to ask whether an event occurs as well as when, add a `noul` question. Treat moments as candidates and confirm them (see [audio-units.md](audio-units.md#where-or-how-often-something-happens)).
+The answer is a list of `spans`: time ranges in milliseconds from the start of the file, each with a probability. An empty list means the event was not found. A `span` answer gives times but no share of raters, so to ask whether an event occurs as well as when, add a `noul` question. Treat spans as candidates and confirm them (see [audio-units.md](audio-units.md#where-or-how-often-something-happens)).
 
 ## Closed choices work best
 

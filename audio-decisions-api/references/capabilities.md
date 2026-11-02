@@ -19,7 +19,7 @@ These work well when asked as written, especially as closed choices with options
 | Emphasis | Which word in a supplied sentence carries the stress |
 | Intent | Which intent or request type a spoken request belongs to, from your list (for example banking requests, voice-assistant commands) |
 | Speech acts | Whether an utterance is a question, a statement, a request and so on |
-| Answers from supplied material | Which supplied answer matches what was asked; when in the clip a supplied answer or name is spoken (`moment`) |
+| Answers from supplied material | Which supplied answer matches what was asked; when in the clip a supplied answer or name is spoken (`span`) |
 | Sound quality | How raters would rate the technical quality of transmitted speech |
 | Non-speech | Whether someone laughs; which type of non-verbal sound it is (cough, breath, cry and so on) from options you supply |
 
@@ -36,7 +36,7 @@ These are supported, but each depends on conditions: short clips, supplied optio
 | Perceived traits | Perceived age, perceived sex, voice descriptors | Raters' perceptions, never facts about a person (see "Don't use"). |
 | Environment | Background noise and its type, the acoustic setting, named sounds (a dog, an alarm) from your list, how intrusive the noise is | Closed lists of sound types. Music under speech is weaker. |
 | Conversation | Whether two people talk over each other; whether someone interrupts or just acknowledges; pauses within a turn; the gap before a reply | Work on a selected excerpt around the moment, not across a whole call. |
-| Timing | When something happens (`moment`); where a pause falls relative to supplied words | Moments are candidates, not exact timestamps: confirm each with a `noul` question on a window around it. |
+| Timing | When something happens (`span`); where a pause falls relative to supplied words | Spans are candidates, not exact timestamps: confirm each with a `noul` question on a window around it. |
 | Responses | Whether a reply is relevant to what was asked; whether it fits emotionally; whether a performance fits a line | Supply the earlier turn or the intended line in `context`. |
 | Intelligibility and clarity | How much of the speech a listener can understand; clarity of a read-out | Phone audio and accents not yet well covered. |
 
