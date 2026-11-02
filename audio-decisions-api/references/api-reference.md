@@ -53,7 +53,7 @@ curl https://api.cloud.hume.ai/v0/decisions/file \
       "instructions": "How fast does the caller speak?",
       "criteria": ["Slow", "Moderate", "Fast"]
     },
-    "laughs": { "type": "moment", "instructions": "When does the caller laugh?" }
+    "laughs": { "type": "span", "instructions": "When does the caller laugh?" }
   }
 }
 ```
@@ -77,8 +77,8 @@ A `noul` question's `criteria` is optional. Unknown fields in the request are re
       "legend": { "0": "Slow", "1": "Moderate", "2": "Fast" }
     },
     "laughs": {
-      "type": "moment",
-      "moments": [ { "audio_start_ms": 12340, "audio_end_ms": 13910, "probability": 0.77 } ]
+      "type": "span",
+      "spans": [ { "audio_start_ms": 12340, "audio_end_ms": 13910, "probability": 0.77 } ]
     }
   }
 }
@@ -89,7 +89,7 @@ Values are illustrative.
 - **`noul`** is the share of raters who would answer yes.
 - **`choice`** and **`score`** probabilities sum to 1. `score` is the mean level, counted from 0. `probabilities` and `legend` for `score` are keyed by level index as strings, so don't rely on key order.
 - **`confidence`** runs from 0 (every option equally likely) to 1 (all on one option). It measures how much raters would agree, not how sure the model is.
-- **`moments`** are in milliseconds from the start of the file, in order of `audio_start_ms`, with overlapping candidates merged. An empty list means the event was not found. A `moment` answer gives times but no share of raters, so to ask whether an event occurs as well as when, add a `noul` question.
+- **`spans`** are in milliseconds from the start of the file, in order of `audio_start_ms`, with overlapping candidates merged. An empty list means the event was not found. A `span` answer gives times but no share of raters, so to ask whether an event occurs as well as when, add a `noul` question.
 - **`run_id`** identifies the run. The run endpoints return a run's status, when it started and ended, and the request it evaluated, not its answers: store the answers yourself.
 - **Ignore unknown fields and unknown answer types** rather than treating them as errors. The API adds fields as it grows.
 
@@ -197,7 +197,7 @@ for chunk in result.chunks:
 
 - **`max_chunk_ms` has no default.** 300000 is the longest chunk the API accepts and sends the fewest requests. Shorter chunks give answers about shorter stretches.
 - **Chunks are equal in length by default,** so the last one isn't a short remainder. `split="fixed"` makes every chunk `max_chunk_ms` long except the last.
-- **Moment times are measured from the start of the chunk.** Add the chunk's `start_ms` to place a moment in the recording.
+- **Span times are measured from the start of the chunk.** Add the chunk's `start_ms` to place a span in the recording.
 - **`start_ms` and `end_ms`** send only part of the recording.
 - **A failed chunk doesn't raise.** Its error is recorded on the chunk, so check `result.complete` before relying on the result. To resume a job that stopped, call `create_chunked` again with `start_ms=result.resume_ms` and the same `end_ms`.
 - **`decisions.iter_create_chunked`** (`iterCreateChunked`) yields each chunk's result as soon as it's done, so you can save each response before the next chunk is sent.

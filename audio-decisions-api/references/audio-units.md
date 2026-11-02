@@ -37,13 +37,13 @@ You have two patterns.
 - **Cut at silences where you can,** so window edges fall in pauses rather than mid-word or mid-laugh. Voice activity detection (for example `webrtcvad` or Silero VAD) gives you the pauses.
 - **Merge hits.** When neighbouring windows both say yes, treat them as one event unless the gap between them is long enough to be two.
 
-**A `moment` question, confirmed with `noul`.** Use this for rare events in long audio, where scanning with windows everywhere would waste requests.
+**A `span` question, confirmed with `noul`.** Use this for rare events in long audio, where scanning with windows everywhere would waste requests.
 
-1. Ask the `moment` question on the turn or the chunk (up to 5 minutes).
-2. For each moment returned, cut a window of at least 5 s centred on it and ask a `noul` question about the same event.
-3. Keep the moments the `noul` confirms.
+1. Ask the `span` question on the turn or the chunk (up to 5 minutes).
+2. For each span returned, cut a window of at least 5 s centred on it and ask a `noul` question about the same event.
+3. Keep the spans the `noul` confirms.
 
-Treat moments as candidates, not measurements. Moment times are in milliseconds from the start of the file you sent: when you cut the file from a longer recording, or use the SDKs' `create_chunked`, add the cut's or the chunk's `start_ms`. An event that crosses a chunk boundary can come back as two shorter moments, as one that stops at the boundary, or not at all, so merge moments that meet at a boundary.
+Treat spans as candidates, not measurements. Span times are in milliseconds from the start of the file you sent: when you cut the file from a longer recording, or use the SDKs' `create_chunked`, add the cut's or the chunk's `start_ms`. An event that crosses a chunk boundary can come back as two shorter spans, as one that stops at the boundary, or not at all, so merge spans that meet at a boundary.
 
 ### An overall impression of a long recording
 
