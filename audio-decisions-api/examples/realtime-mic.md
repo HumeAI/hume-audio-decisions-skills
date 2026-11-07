@@ -134,7 +134,7 @@ function toWav(samples: Float32Array, rate: number): Blob {
 
 ## Choices made here, and when to change them
 
-- **5 s windows:** long enough for a judgment about how someone sounds, and the shortest the API accepts: it refuses shorter clips with `audio_too_short`. Lengthen the window if you need to, but don't shorten it.
+- **5 s windows:** long enough for a judgment about how someone sounds. The API accepts windows from 1 s, which answer sooner, but only a few questions, such as which language is spoken, hold up at that length; keep 5 s or more for the rest.
 - **2.5 s hop:** answers refresh twice per window. Measure your round trip first: if it's longer than the hop, requests get skipped. A longer hop costs less.
 - **Skip, don't queue:** a queue falls behind and shows stale answers.
 - **Silence gate:** saves requests and avoids answers about background noise. When the user mutes or goes quiet, let the indicator relax back to neutral after a few seconds rather than holding the last answer.

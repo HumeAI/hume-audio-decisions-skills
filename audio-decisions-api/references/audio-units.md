@@ -24,7 +24,7 @@ Ask about the turn, or the whole file. Don't cut it into windows: you only need 
 
 ### How a known moment sounds
 
-When you already know where the moment is (the customer's reply to "Do you agree?", the agent's greeting, a line from a script), cut a window **centred on the moment, at least 5 s long**. The API refuses clips shorter than 5 seconds, and a one-word reply lasts a fraction of a second, so pad it with the audio around it rather than sending the word alone.
+When you already know where the moment is (the customer's reply to "Do you agree?", the agent's greeting, a line from a script), cut a window **centred on the moment, at least 5 s long**. Most questions need at least 5 seconds of audio, and a one-word reply lasts a fraction of a second, so pad it with the audio around it rather than sending the word alone.
 
 ### Where or how often something happens
 
@@ -32,7 +32,7 @@ You have two patterns.
 
 **Overlapping windows with a `noul` question.** Use this when the event is frequent, or when missing one is costly.
 
-- **Size the window to the event.** A window should be at least twice as long as the longest event you expect, and no shorter than the API's 5 s minimum. Filler words ("um", "uh") are short, so 5 s windows work. Laughter can last several seconds, so use 6–8 s.
+- **Size the window to the event.** A window should be at least twice as long as the longest event you expect, and no shorter than 5 s for most questions. Filler words ("um", "uh") are short, but the question is answered best on windows of 10 s or more. Laughter can last several seconds, so use 6–8 s.
 - **Overlap the windows** so no event is cut in half everywhere. If the step between window starts (the hop) is no longer than the window length minus the longest event, every event fits whole inside at least one window. Example: 6 s windows every 3 s fully contain any event up to 3 s long. Overlap costs requests: half-overlapping windows double them.
 - **Cut at silences where you can,** so window edges fall in pauses rather than mid-word or mid-laugh. Voice activity detection (for example `webrtcvad` or Silero VAD) gives you the pauses.
 - **Merge hits.** When neighbouring windows both say yes, treat them as one event unless the gap between them is long enough to be two.
@@ -70,7 +70,7 @@ flowchart LR
 
 Decisions to make:
 
-- **Window length.** Long enough to answer on its own: there's no memory between requests. 5 s is the shortest the API accepts and a reasonable start for how someone sounds.
+- **Window length.** Long enough to answer on its own: there's no memory between requests. 5 s is a reasonable start for how someone sounds. The API accepts audio from 1 s, and a few questions, such as which language is spoken or whether someone laughs, hold up at that length.
 - **Hop (how often you send).** At least the round-trip time of one request, or requests pile up. Measure the round trip in your own setup. If a request is still in flight when the next hop arrives, skip that hop rather than queueing it. Cost and rate-limit use grow with how often you send.
 - **Fixed hop or end of turn.** For conversations, sending at the end of each turn (when the speaker pauses) often beats a fixed timer: the window holds a whole thought, and you send fewer requests.
 - **Smoothing.** Don't act on one window. Require N windows in a row above the threshold, or use a moving average. Let the state relax back to neutral after a quiet stretch.
@@ -87,7 +87,7 @@ What this gives you is an answer per window. It isn't continuous monitoring, and
 
 ## Preparing audio
 
-The API accepts MP3 and WAV, from 5 seconds to 5 minutes long. It resamples every file to 16 kHz and mixes its channels into one before the model hears it. The SDKs do the same to WAV files before upload, which keeps uploads small, and `downmix_strategy="first_channel"` keeps only the first channel instead (see [api-reference.md](api-reference.md#audio-the-sdks-prepare)). Phone audio (8 kHz) is accepted, but check your questions on your own phone recordings before trusting thresholds.
+The API accepts MP3 and WAV, from 1 second to 5 minutes long. It resamples every file to 16 kHz and mixes its channels into one before the model hears it. The SDKs do the same to WAV files before upload, which keeps uploads small, and `downmix_strategy="first_channel"` keeps only the first channel instead (see [api-reference.md](api-reference.md#audio-the-sdks-prepare)). Phone audio (8 kHz) is accepted, but check your questions on your own phone recordings before trusting thresholds.
 
 Useful `ffmpeg` commands:
 
@@ -105,6 +105,6 @@ ffmpeg -i call.wav -af "pan=mono|c0=c1" -ar 16000 agent.wav
 ffmpeg -ss 12.5 -t 5 -i caller.wav -c copy window.wav
 ```
 
-To split a long recording into chunks, use the SDKs' `create_chunked` rather than a fixed ffmpeg split, which can leave a final chunk shorter than 5 seconds.
+To split a long recording into chunks, use the SDKs' `create_chunked` rather than a fixed ffmpeg split, which can leave a final chunk too short to answer, or under the API's 1 second minimum.
 
 Check which channel is which on a few files before processing a batch: the order varies between telephony providers.

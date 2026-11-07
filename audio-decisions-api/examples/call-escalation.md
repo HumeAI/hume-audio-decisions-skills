@@ -5,7 +5,7 @@
 **Inputs:** a stereo recording (caller on one channel, agent on the other) and a transcript with speaker turns and timestamps from your speech-to-text provider.
 
 **Units:**
-- Each caller turn of at least 2 s, from the caller's channel, padded with the audio around it to the API's 5 s minimum: how the caller sounds.
+- Each caller turn of at least 2 s, from the caller's channel, padded with the audio around it to 5 s, which how someone sounds needs: how the caller sounds.
 - A 5 s window of the mixed audio centred on each point where the agent starts talking while the caller is still talking: does the agent take over?
 
 **Other signals:** the transcript, for insults, threats and requests for a manager.
@@ -61,7 +61,7 @@ OVERLAP_REQUEST = DecisionsRequest(
 INSULTS = re.compile(r"\b(idiot|useless|stupid|ridiculous)\b", re.I)
 ESCALATION = re.compile(r"\b(manager|supervisor|cancel|lawyer)\b", re.I)
 
-MIN_CLIP_S = 5.0  # the API refuses shorter audio with audio_too_short
+MIN_CLIP_S = 5.0  # how someone sounds needs about 5 s; the API's floor is 1 s
 
 
 def window(start: float, end: float) -> tuple[float, float]:

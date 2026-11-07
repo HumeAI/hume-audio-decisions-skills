@@ -31,7 +31,7 @@ These are supported, but each depends on conditions: short clips, supplied optio
 | --- | --- | --- |
 | Emotion | The emotion a voice conveys; whether a named emotion is present; sentiment of a spoken opinion | Strongest on short clips of one speaker. Weaker in long, natural conversations. Ask what the voice conveys, not what the person feels. |
 | Delivery | Speaking rate (slow / moderate / fast), pitch, loudness changes, breathiness, monotone vs lively | Coarse levels, not measurements. Not "words per minute". |
-| Disfluency | Filled pauses ("um"), repeated words or sounds | Short windows (5 s, the shortest the API accepts). Whether a filler is present, not why. |
+| Disfluency | Filled pauses ("um"), repeated words or sounds | Windows of at least 10 s. Whether a filler is present, not why. |
 | Voice | Synthetic origin of a whole clip, perceived human-likeness, naturalness | Depends on the voice generator and recording chain. New generators and heavy compression are uncertain. |
 | Perceived traits | Perceived age, perceived sex, voice descriptors | Raters' perceptions, never facts about a person (see "Don't use"). |
 | Environment | Background noise and its type, the acoustic setting, named sounds (a dog, an alarm) from your list, how intrusive the noise is | Closed lists of sound types. Music under speech is weaker. |
