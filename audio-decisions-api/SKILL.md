@@ -55,7 +55,7 @@ Work through four things:
 | An overall impression of a recording longer than 5 minutes | Chunks of up to 5 minutes, cut and sent by the SDKs' `create_chunked`, answers combined in your code |
 | Answers *while someone is talking* | Rolling windows (see the real-time recipe) |
 
-The API refuses clips shorter than 5 seconds (`audio_too_short`), so pad a short moment with the audio around it rather than sending it alone.
+The API refuses clips shorter than 1 second (`audio_too_short`), but most questions need at least 5 seconds of audio, so pad a short moment with the audio around it rather than sending it alone. A few questions, such as which language is spoken or whether someone laughs, hold up at 1 second; each [use case](https://dev.hume.ai/audio-decisions/docs/use-cases) shows its recommended minimum.
 
 **How fast do you need answers?** After the fact, use turns, whole files or chunks. During a conversation, send independent rolling windows. This gives an answer per window, not continuous monitoring or exact event timing. The recipe, including window length, hop size and smoothing, is in [references/audio-units.md](references/audio-units.md#real-time).
 

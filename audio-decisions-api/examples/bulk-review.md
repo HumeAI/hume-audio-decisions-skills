@@ -100,7 +100,7 @@ if __name__ == "__main__":
     print(f"Wrote {len(rows)} rows to results.csv")
 ```
 
-Every file must be at least 5 seconds long: the API refuses shorter audio with `audio_too_short`.
+Every file must be at least 1 second long: the API refuses shorter audio with `audio_too_short`. Most questions need at least 5 seconds.
 
 ## What to do next
 

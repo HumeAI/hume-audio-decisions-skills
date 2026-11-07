@@ -95,7 +95,7 @@ Values are illustrative.
 
 ## Counting input tokens
 
-Requests are billed in input tokens, counted from the context, the questions and the duration of the audio. The input tokens endpoint takes a JSON body with `audio_duration_ms`, `context` and `questions`, and returns `input_tokens`. It takes no audio, so you can count a request before sending it. A duration under 5 seconds or over 5 minutes is refused the same way a decisions request would be, so count a long recording one chunk at a time: each chunk is billed as its own request.
+Requests are billed in input tokens, counted from the context, the questions and the duration of the audio. The input tokens endpoint takes a JSON body with `audio_duration_ms`, `context` and `questions`, and returns `input_tokens`. It takes no audio, so you can count a request before sending it. A duration under 1 second or over 5 minutes is refused the same way a decisions request would be, so count a long recording one chunk at a time: each chunk is billed as its own request.
 
 ## SDKs
 
@@ -219,7 +219,7 @@ Error bodies are `{ "type": "error", "code", "message", "param"?, "request_id" }
 | 400 | `question_invalid` | A question doesn't match the schema, for example duplicate option names, or fewer than two options |
 | 400 | `audio_decode_failed` | The audio file couldn't be decoded |
 | 400 | `audio_format_unsupported` | Not MP3 or WAV |
-| 400 | `audio_too_short` | Under 5 seconds |
+| 400 | `audio_too_short` | Under 1 second |
 | 400 | `audio_too_long` | Over 5 minutes |
 | 400 | `invalid_request` | A query parameter or `cursor` the run list doesn't accept |
 | 401 | | Missing or rejected API key. Answered by Hume's API gateway, so the body has no `code` |
@@ -234,7 +234,7 @@ Error bodies are `{ "type": "error", "code", "message", "param"?, "request_id" }
 
 ## Limits
 
-- **One file per request,** MP3 or WAV, **from 5 seconds to 5 minutes**.
+- **One file per request,** MP3 or WAV, **from 1 second to 5 minutes**.
 - **Request size:** up to 25,000,000 bytes for the `request` and `file` parts together. With the SDKs' default `downmix_strategy`, 5 minutes of mono or stereo WAV always fits.
 - **Questions:** up to 100 per request, with IDs of up to 256 characters. `choice` and `score` questions take 2 to 100 options or levels.
 - **Text length** of `context` and instructions is capped. Check the reference for the current values.
