@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Links between files and to their headings. External links are not checked.
+  links:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: --offline --include-fragments --no-progress '**/*.md'
+
+  # SKILL.md frontmatter, per the Agent Skills spec (agentskills.io).
+  skills:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - run: |
+          status=0
+          for f in */SKILL.md; do
+            dir=$(dirname "$f")
+            name=$(yq --front-matter=extract '.name // ""' "$f")
+            desc=$(yq --front-matter=extract '.description // ""' "$f")
+            if [[ ! "$name" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ || ${#name} -gt 64 ]]; then
+              echo "::error file=$f::name '$name' must be 1-64 lowercase letters, digits, and single hyphens"; status=1
+            fi
+            if [[ "$name" != "$dir" ]]; then
+              echo "::error file=$f::name '$name' must match its directory '$dir'"; status=1
+            fi
+            if [[ -z "$desc" || ${#desc} -gt 1024 ]]; then
+              echo "::error file=$f::description must be 1-1024 characters (is ${#desc})"; status=1
+            fi
+          done
+          exit $status
+
+  # The one check to require in branch protection: passes only when every job
+  # above succeeded or was skipped.
+  ci:
+    if: always()
+    needs: [links, skills]
+    runs-on: ubuntu-latest
+    steps:
+      - env:
+          NEEDS: ${{ toJSON(needs) }}
+        run: jq -e 'all(.[]; .result == "success" or .result == "skipped")' <<<"$NEEDS"
